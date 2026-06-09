@@ -1,0 +1,21 @@
+# Cloud Build config for alkira-kb-mcp-http (streamable-HTTP MCP container).
+# Builds via Kaniko, pushes both :SHORT_SHA and :latest tags to Artifact Registry.
+steps:
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    args:
+      - --dockerfile=Dockerfile
+      - --context=.
+      - --destination=${_IMAGE_PATH}:${SHORT_SHA}
+      - --destination=${_IMAGE_PATH}:latest
+      - --cache=true
+      - --cache-ttl=720h
+      - --cache-repo=${_CACHE_REPO}
+      - --compressed-caching=false
+
+substitutions:
+  _IMAGE_PATH: 'us-central1-docker.pkg.dev/alkira-sales/alkira-kb-mcp/alkira-kb-mcp-http'
+  _CACHE_REPO: 'us-central1-docker.pkg.dev/alkira-sales/alkira-kb-mcp/cache'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
